@@ -1,15 +1,14 @@
-package com.mobprog.tubes.user;
+package com.mobprog.tubes;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.mobprog.tubes.R;
-
-public class RegistActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
     }
 
     @Override

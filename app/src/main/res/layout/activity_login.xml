@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:orientation="vertical"
-    tools:context=".user.LoginActivity">
+    tools:context=".LoginActivity">
 
     <TextView
         android:id="@+id/textView1"
