@@ -10,6 +10,7 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -54,4 +55,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_regist">Registrasi</string>
+    <string name="button_login">Masuk</string>
+    <string name="button_regis">Daftar</string>
 </resources>
