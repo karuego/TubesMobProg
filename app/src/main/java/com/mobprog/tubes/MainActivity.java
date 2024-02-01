@@ -2,15 +2,11 @@ package com.mobprog.tubes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,15 +21,6 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 import android.app.AlertDialog;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.jetbrains.annotations.Nullable;
-
 public class MainActivity extends AppCompatActivity {
     private ApiTask data;
     //private FetchData data;
@@ -45,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btn1 = findViewById(R.id.button1);
-        Button btn2 = findViewById(R.id.button2);
+        final Button btn1 = findViewById(R.id.button1);
+        final Button btn2 = findViewById(R.id.button2);
         tbl1 = findViewById(R.id.tableLayout1);
 
         //appCtx = getApplicationContext();
@@ -56,11 +43,20 @@ public class MainActivity extends AppCompatActivity {
 
         //muatTabel();
 
-        btn1.setOnClickListener(v -> {
-            showMessage("Data belum bisa ditambah 😢");
-        });
-
+        btn1.setOnClickListener(this::btn1_OnClick);
         btn2.setOnClickListener(v -> muatTabel());
+    }
+
+    protected void btn1_OnClick(View v) {
+        Intent pindah;
+
+        if (Pengaturan.ambilUserName(getApplicationContext()).isBlank()) {
+            pindah = new Intent(this, LoginActivity.class);
+        } else {
+            pindah = new Intent(this, DataTambahActivity.class);
+        }
+
+        startActivity(pindah);
     }
 
     protected void muatTabel() {
