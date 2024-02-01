@@ -49,6 +49,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical"
+            android:labelFor="@id/editText1"
             android:text="@string/prompt_username"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -59,10 +60,10 @@
             android:layout_height="59dp"
             android:background="#eee"
             android:ems="10"
+            android:hint="@string/prompt_username"
             android:inputType="text"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:text="@string/prompt_username" />
+            android:paddingRight="8dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -90,6 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:gravity="center_vertical"
+            android:labelFor="@id/editText2"
             android:text="@string/prompt_password"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -100,10 +102,10 @@
             android:layout_height="59dp"
             android:background="#eee"
             android:ems="10"
+            android:hint="@string/prompt_password"
             android:inputType="text"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:text="@string/prompt_password" />
+            android:paddingRight="8dp" />
     </LinearLayout>
 
     <LinearLayout

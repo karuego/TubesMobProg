@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import java.util.Objects
@@ -57,9 +58,9 @@ internal object Util {
         }
         val alertDialog = builder.create()
 
-        /*Tabel.ctx.runOnUiThread(Runnable {
+        (ctx as Activity).runOnUiThread(Runnable {
             alertDialog.show()
-        })*/
+        })
 
         return alertDialog
     }
@@ -126,9 +127,9 @@ internal object Util {
 
     @JvmStatic
     fun hideDialog(ctx: Context, dialog: AlertDialog) {
-        /*Tabel.ctx.runOnUiThread {
+        (ctx as Activity).runOnUiThread {
             dialog.dismiss()
-        }*/
+        }
     }
 
     @JvmStatic
@@ -196,5 +197,24 @@ internal object Util {
     @JvmStatic
     fun simulateBlocking() {
         simulateBlocking(2000)
+    }
+
+    object Setting {
+        @JvmStatic
+        private var NAMA_FILE = "PengaturanAplikasi"
+
+        @JvmStatic
+        fun set(ctx: Context, key: String, value: String) {
+            val pref = ctx.getSharedPreferences(NAMA_FILE, Context.MODE_PRIVATE)
+            val editor = pref.edit()
+            editor.putString(key, value)
+            editor.apply()
+        }
+
+        @JvmStatic
+        fun get(ctx: Context, kunci: String, defVal: String): String {
+            val pref = ctx.getSharedPreferences(NAMA_FILE, Context.MODE_PRIVATE)
+            return pref.getString(kunci, defVal)!!
+        }
     }
 }

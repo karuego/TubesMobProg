@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/bt_primaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/Widget.AppCompat.ActionBar.Solid</item>
+        <item name="android:windowActionBarOverlay">false</item>
     </style>
     <!-- Base application theme. -->
     <style name="Base.Theme.TubesMobProg" parent="Theme.AppCompat.DayNight.NoActionBar">
