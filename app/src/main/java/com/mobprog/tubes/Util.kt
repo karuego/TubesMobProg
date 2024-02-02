@@ -9,18 +9,6 @@ import android.util.Log
 import android.widget.Toast
 import java.util.Objects
 
-internal interface FuncDialog {
-    fun onClick(dialog: DialogInterface?, which: Int)
-}
-
-interface Callback {
-    fun onResult(result: String)
-    fun onError(errorMessage: String)
-    fun onDone() {
-        // Implementasi default (kosong)
-    }
-}
-
 internal object Util {
     //@JvmStatic
     //lateinit var appCtx: Context
@@ -38,8 +26,8 @@ internal object Util {
     @JvmStatic
     fun showDialog(
         ctx: Context, msg: String, title: String = "Info",
-        pBtn: String = "Ok", pFunc: FuncDialog? = null,
-        nBtn: String? = null, nFunc: FuncDialog? = null
+        pBtn: String = "Ok", pFunc: DialogInterface.OnClickListener? = null,
+        nBtn: String? = null, nFunc: DialogInterface.OnClickListener? = null
     ): AlertDialog {
         val builder = AlertDialog.Builder(ctx)
         builder.setTitle(title)
@@ -68,8 +56,8 @@ internal object Util {
     @JvmStatic
     fun showDialog2(
         ctx: Context, msg: String, title: String = "Info",
-        pBtn: String? = "Ok", pFunc: FuncDialog? = null,
-        nBtn: String? = null, nFunc: FuncDialog? = null
+        pBtn: String? = "Ok", pFunc: DialogInterface.OnClickListener? = null,
+        nBtn: String? = null, nFunc: DialogInterface.OnClickListener? = null
     ): AlertDialog {
         val builder = AlertDialog.Builder(ctx)
         builder.setTitle(title)
@@ -102,7 +90,7 @@ internal object Util {
 
     @JvmStatic
     fun showDialog(ctx: Context, msg: String): AlertDialog {
-        return showDialog(ctx, msg)
+        return showDialog(ctx, msg, "Info", "Ok", null, null, null)
     }
 
     @JvmStatic
@@ -152,37 +140,37 @@ internal object Util {
     }
 
     @JvmStatic
-    fun catchError(e: Exception) {
+    fun catchError(ctx: Context, e: Exception) {
         logError(e)
-        showDialog(Tabel.ctx, e.toString())
+        showDialog(ctx, e.toString())
     }
 
     @JvmStatic
-    fun catchError(e: Exception, title: String) {
+    fun catchError(ctx: Context, e: Exception, title: String) {
         logError(e)
-        showDialog(Tabel.ctx, e.toString(), title)
+        showDialog(ctx, e.toString(), title)
     }
 
     @JvmStatic
-    fun catchError(e: Exception, title: String, msg: String) {
+    fun catchError(ctx: Context, e: Exception, title: String, msg: String) {
         logError(e)
-        showDialog(Tabel.ctx, "$msg \n--------\n $e", title)
+        showDialog(ctx, "$msg \n--------\n $e", title)
     }
 
     @JvmStatic
-    fun catchErrorPos(e: Exception, pos: String) {
+    fun catchErrorPos(ctx: Context, e: Exception, pos: String) {
         val msg = "> on $pos \n--------\n"
 
         logErrorMsg(e, msg)
-        showDialog(Tabel.ctx, msg + e.toString())
+        showDialog(ctx, msg + e.toString())
     }
 
     @JvmStatic
-    fun catchErrorPos(e: Exception, title: String, pos: String) {
+    fun catchErrorPos(ctx: Context, e: Exception, title: String, pos: String) {
         val msg = "> on $pos \n--------\n"
 
         logErrorMsg(e, msg)
-        showDialog(Tabel.ctx, msg + e.toString(), title)
+        showDialog(ctx, msg + e.toString(), title)
     }
 
     @JvmStatic
@@ -215,6 +203,14 @@ internal object Util {
         fun get(ctx: Context, kunci: String, defVal: String): String {
             val pref = ctx.getSharedPreferences(NAMA_FILE, Context.MODE_PRIVATE)
             return pref.getString(kunci, defVal)!!
+        }
+    }
+
+    interface Callback {
+        fun onResult(result: String)
+        fun onError(errorMessage: String)
+        fun onDone() {
+            // Implementasi default (kosong)
         }
     }
 }
