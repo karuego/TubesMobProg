@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
@@ -33,50 +34,54 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayoutX"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="5dp"
         android:layout_marginTop="50dp"
         android:background="@color/black_overlay"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
-    <TableLayout
-        android:id="@+id/tableLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <ScrollView
         android:layout_marginTop="60dp"
-        android:divider="@drawable/tabel_divider"
-        android:dividerPadding="4dp"
-        android:showDividers="middle"
-        android:stretchColumns="*"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-        <TableRow
+        <TableLayout
+            android:id="@+id/tableLayout1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical">
+            android:layout_height="wrap_content"
+            android:divider="@drawable/tabel_divider"
+            android:dividerPadding="4dp"
+            android:gravity="center_horizontal"
+            android:showDividers="middle">
 
-            <TextView
-                android:id="@+id/textView1"
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_weight="1"
-                android:text="TextView"
-                android:textColor="@color/light_blue_600"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical">
 
-            <TextView
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="---- ----"
+                    android:textColor="@color/light_blue_600"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+                <!--<TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="1"
-                android:text="TextView"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="Nama Barang"
                 android:textColor="@color/light_blue_600"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -87,23 +92,23 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="1"
-                android:text="TextView"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="Jumlah Barang"
                 android:textColor="@color/light_blue_600"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView4"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="1"
-                android:text="TextView"
-                android:textColor="@color/light_blue_600"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </TableRow>
+                android:gravity="center_horizontal|center_vertical"
+                android:text="- - - - - -" /> -->
 
-    </TableLayout>
+            </TableRow>
+
+        </TableLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

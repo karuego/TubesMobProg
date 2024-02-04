@@ -14,12 +14,13 @@ import android.widget.Toast;
 class ApiMhs {
 
     static String apiUrl = "https://65af1dcf2f26c3f2139a2a01.mockapi.io/mhs";
-    static MainActivity ctx;
+    static String apiUrl2 = "http://10.0.2.2:8080";
+    static Context ctx;
 
     static final String errorData = "[{'nama': '-', 'nim': '-', 'kelas': '-'}]";
 
     static String getData(String apiUrl) {
-        HttpURLConnection urlConn = null;
+        /*HttpURLConnection urlConn = null;
         BufferedReader reader = null;
 
         try {
@@ -46,10 +47,10 @@ class ApiMhs {
                 return errorData;
             }
         } catch (IOException e) {
-            Util.catchErrorPos(e, "ApiMhs.getData, 3");
+            Util.catchErrorPos(ctx, e, "ApiMhs.getData, 3");
             return errorData;
         } catch (Exception e) {
-            Util.catchErrorPos(e, "ApiMhs.getData");
+            Util.catchErrorPos(ctx, e, "ApiMhs.getData");
             return errorData;
         } finally {
             if (urlConn != null) {
@@ -60,10 +61,54 @@ class ApiMhs {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    Util.catchErrorPos(e, "ApiMhs.getData, 2");
+                    Util.catchErrorPos(ctx, e, "ApiMhs.getData, 2");
                 }
             }
+        }*/
+
+        try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                final StringBuilder stringBuilder = new StringBuilder();
+
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+
+                return stringBuilder.toString();
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch (final IOException e) {
+            Util.catchErrorPos(ctx, e, "ApiMhs.getData");
+            return "";
         }
+
+        /*try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                final StringBuilder stringBuilder = new StringBuilder();
+
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+
+                return stringBuilder.toString();
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch (final IOException e) {
+            Util.catchErrorPos(ctx, e, "ApiMhs.getData");
+            return errorData;
+        }*/
 
         /*URL url = null;
         HttpURLConnection urlConn = null;
@@ -88,10 +133,10 @@ class ApiMhs {
 
             return stringBuilder.toString();
         } catch (IOException e) {
-            Util.catchErrorPos(e, "ApiMhs.getData, 2");
+            Util.catchErrorPos(ctx, e, "ApiMhs.getData, 2");
             return null;
         } catch (Exception e) {
-            Util.catchErrorPos(e, "ApiMhs.getData");
+            Util.catchErrorPos(ctx, e, "ApiMhs.getData");
             return "[{'nama': 'error', 'nim': 'error', 'kelas': 'error'}]";
             //return null;
         } finally {
@@ -102,7 +147,11 @@ class ApiMhs {
     }
 
     static String get() {
-        return getData(apiUrl);
+        return getData(apiUrl + "get");
+    }
+
+    static String get2() {
+        return getData(apiUrl2 + "/get");
     }
 
     static String get(int id) {
@@ -144,7 +193,7 @@ class ApiMhs {
                 return null;
             }
         } catch (Exception e) {
-            Util.catchErrorPos(e, "ApiMhs.post");
+            Util.catchErrorPos(ctx, e, "ApiMhs.post");
             //return null;
             return "[{'nama': 'error', 'nim': 'error', 'kelas': 'error'}]";
         } finally {
@@ -156,7 +205,58 @@ class ApiMhs {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    Util.catchErrorPos(e, "ApiMhs.post, 2");
+                    Util.catchErrorPos(ctx, e, "ApiMhs.post, 2");
+                }
+            }
+        }
+    }
+
+    static String post2(String jsonData) {
+        HttpURLConnection urlConn = null;
+        BufferedReader reader = null;
+
+        try {
+            URL url = new URL(apiUrl + "/post");
+            urlConn = (HttpURLConnection) url.openConnection();
+
+            urlConn.setRequestMethod("POST");
+            urlConn.setInstanceFollowRedirects(true);
+            urlConn.setRequestProperty("Content-Type", "application/json");
+            urlConn.setDoOutput(true);
+
+            DataOutputStream wr = new DataOutputStream(urlConn.getOutputStream());
+            wr.writeBytes(jsonData);
+            wr.flush();
+            wr.close();
+
+            int resCode = urlConn.getResponseCode();
+            if (resCode == HttpURLConnection.HTTP_OK) {
+                reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    response.append(line).append('\n');
+                }
+
+                return response.toString();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            Util.catchErrorPos(ctx, e, "ApiMhs.post");
+            //return null;
+            return "[{'nama': 'error', 'nim': 'error', 'kelas': 'error'}]";
+        } finally {
+            if (urlConn != null) {
+                urlConn.disconnect();
+            }
+
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    Util.catchErrorPos(ctx, e, "ApiMhs.post, 2");
                 }
             }
         }
@@ -195,7 +295,7 @@ class ApiMhs {
                 return null;
             }
         } catch (Exception e) {
-            Util.catchErrorPos(e, "ApiMhs.put");
+            Util.catchErrorPos(ctx, e, "ApiMhs.put");
             //return null;
             return "[{'nama': 'error', 'nim': 'error', 'kelas': 'error'}]";
         } finally {
@@ -207,7 +307,7 @@ class ApiMhs {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    Util.catchErrorPos(e, "ApiMhs.put, 2");
+                    Util.catchErrorPos(ctx, e, "ApiMhs.put, 2");
                 }
             }
         }
@@ -241,7 +341,7 @@ class ApiMhs {
                 return null;
             }
         } catch (Exception e) {
-            Util.catchErrorPos(e, "ApiMhs.delete");
+            Util.catchErrorPos(ctx, e, "ApiMhs.delete");
             return "[{'nama': 'error', 'nim': 'error', 'kelas': 'error'}]";
         } finally {
             if (urlConn != null) {
@@ -252,7 +352,52 @@ class ApiMhs {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    Util.catchErrorPos(e, "ApiMhs.delete, 2");
+                    Util.catchErrorPos(ctx, e, "ApiMhs.delete, 2");
+                }
+            }
+        }
+    }
+
+    static String delete2(String id) {
+        HttpURLConnection urlConn = null;
+        BufferedReader reader = null;
+
+        try {
+            URL url = new URL(apiUrl.concat("/hapus/").concat(id));
+            urlConn = (HttpURLConnection) url.openConnection();
+
+            urlConn.setRequestMethod("DELETE");
+            urlConn.setInstanceFollowRedirects(true);
+            urlConn.setRequestProperty("Content-Type", "application/json");
+            urlConn.setDoOutput(true);
+
+            int resCode = urlConn.getResponseCode();
+            if (resCode == HttpURLConnection.HTTP_OK) {
+                reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    response.append(line).append('\n');
+                }
+
+                return response.toString();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            Util.catchErrorPos(ctx, e, "ApiMhs.delete");
+            return "[{'nama': 'error', 'nim': 'error', 'kelas': 'error'}]";
+        } finally {
+            if (urlConn != null) {
+                urlConn.disconnect();
+            }
+
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    Util.catchErrorPos(ctx, e, "ApiMhs.delete, 2");
                 }
             }
         }

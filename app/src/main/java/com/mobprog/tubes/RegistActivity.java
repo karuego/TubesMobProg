@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class RegistActivity extends AppCompatActivity {
 
@@ -28,6 +29,7 @@ public class RegistActivity extends AppCompatActivity {
             Pengaturan.simpanUserName(getApplicationContext(), name);
             Pengaturan.simpanUserPass(getApplicationContext(), pass);
 
+            Toast.makeText(this, "User ditambahkan!", Toast.LENGTH_SHORT).show();
             finish();
         });
     }

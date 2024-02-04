@@ -1,12 +1,23 @@
 package com.mobprog.tubes;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -17,11 +28,17 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 public class Tabel {
+
     static TableLayout tbl;
 
     static void muat(Context ctx, String result) {
         hapus();
         tambah(ctx, result);
+    }
+
+    static void muat2(Context ctx, String result) {
+        reset();
+        tambah2(ctx, result);
     }
 
     static void tambah(Context ctx, String result) {
@@ -36,6 +53,25 @@ public class Tabel {
 
             for (JSONObject jsonObject : jsonList)
                 Tabel.addRow(ctx, jsonObject);
+        } catch (JSONException e) {
+            Util.catchErrorPos(ctx, e, "Error Parsing JSON", "Tabel.tambah");
+        } catch (Exception e) {
+            Util.catchErrorPos(ctx, e, "Tabel.tambah", "Tabel.tambah, 2");
+        }
+    }
+
+    static void tambah2(Context ctx, String result) {
+        try {
+            JSONArray jsonArray = new JSONArray(result);
+            List<JSONObject> jsonList = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++)
+                jsonList.add(jsonArray.getJSONObject(i));
+
+            // Collections.shuffle(jsonList);
+
+            for (JSONObject jsonObject : jsonList)
+                Tabel.addRow2(ctx, jsonObject);
         } catch (JSONException e) {
             Util.catchErrorPos(ctx, e, "Error Parsing JSON", "Tabel.tambah");
         } catch (Exception e) {
@@ -65,12 +101,16 @@ public class Tabel {
         }
     }
 
+    static void reset() {
+        tbl.removeAllViews();
+    }
+
     static void hapus() {
         tbl.removeViews(1, tbl.getChildCount() - 1);
     }
 
-    static void hapus(int id) {
-        tbl.removeViews(1, id + 1);
+    static void hapus(int n) {
+        tbl.removeViewAt(n);
     }
 
     static void addRow(Context ctx, JSONObject jsonObj) {
@@ -114,89 +154,82 @@ public class Tabel {
 
     static void addRow2(Context ctx, JSONObject jsonObj) {
         try {
-            String nama = jsonObj.getString("id");
-            String nim = jsonObj.getString("nama");
-            String kelas = jsonObj.getString("jumlah");
-
-            TableRow tableRow = new TableRow(ctx);
-
             TableLayout.LayoutParams tableRowParams = new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    TableLayout.LayoutParams.WRAP_CONTENT
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
             );
             tableRowParams.setMargins(0, 0, 0, 0);
+
+            String id = jsonObj.getString("id");
+            String nama = jsonObj.getString("nama");
+            String jumlah = jsonObj.getString("jumlah");
+
+            TableRow tableRow = new TableRow(ctx);
             tableRow.setLayoutParams(tableRowParams);
 
-            LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            linearLayoutParams.weight = 1.0f;
+            CustomLayout customLayout = new CustomLayout(ctx);
+            customLayout.setData(nama, jumlah);
+            customLayout.setFuncLihat(v -> {
+                Util.showDialog(ctx, "Id : " + id + "\nBarang : " + nama + "\nJumlah : " + jumlah);
+            });
+            customLayout.setFuncHapus(v -> {
+                tbl.removeView(tableRow);
 
-            LinearLayout kontainer = new LinearLayout(ctx);
-            Button btnLihat = new Button(ctx);
-            Button btnHapus = new Button(ctx);
-            TextView tvId = new TextView(ctx);
-            TextView tvNama = new TextView(ctx);
-            TextView tvJumlah = new TextView(ctx);
+                ExecutorService exe = Executors.newSingleThreadExecutor();
+                Callable<String> myRun = () -> {
+                    try {
+                        URL url = new URL("https://65af1dcf2f26c3f2139a2a01.mockapi.io/mhs/" + id);
+                        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 
-            tvId.setLayoutParams(linearLayoutParams);
-            tvNama.setLayoutParams(linearLayoutParams);
-            tvJumlah.setLayoutParams(linearLayoutParams);
-            btnLihat.setLayoutParams(linearLayoutParams);
-            btnHapus.setLayoutParams(linearLayoutParams);
+                        urlConn.setRequestMethod("DELETE");
+                        urlConn.setInstanceFollowRedirects(true);
+                        urlConn.setRequestProperty("Content-Type", "application/json");
+                        urlConn.setDoOutput(true);
 
-            tvId.setText(nama);
-            tvNama.setText(nim);
-            tvJumlah.setText(kelas);
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+                            final StringBuilder stringBuilder = new StringBuilder();
 
-            tvId.setGravity(Gravity.CENTER);
-            tvNama.setGravity(Gravity.CENTER);
-            tvJumlah.setGravity(Gravity.CENTER);
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(line).append("\n");
+                            }
 
-            tvId.setWidth(0);
-            tvNama.setWidth(0);
-            tvJumlah.setWidth(0);
+                            return stringBuilder.toString();
+                        } finally {
+                            urlConn.disconnect();
+                        }
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                        Util.showDialogError(ctx, "Error ::: \n\n" + e.getMessage());
+                        return "";
+                    }
+                };
 
-            btnLihat.setWidth(2);
-            btnLihat.setHeight(2);
+                Future<String> future = exe.submit(myRun);
+                exe.submit(() -> {
+                    try {
+                        String res = future.get();
+                        String result;
 
-            btnHapus.setWidth(2);
-            btnHapus.setHeight(2);
+                        if (res.isBlank()) {
+                            result = "[{'nama': '-', 'jumlah': '-'}]";
+                            ((Activity) ctx).runOnUiThread(() -> {
+                                Util.showDialog2(ctx, "Gagal menghapus data", "Error", "Ok", null, null, null);
+                            });
+                        }
+                    } catch (ExecutionException | InterruptedException e) {
+                        Util.logError(e);
+                        throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        Util.logError(e);
+                    }
+                });
 
-            kontainer.setOrientation(LinearLayout.HORIZONTAL);
-            kontainer.setWeightSum(3);
-            kontainer.setClickable(true);
+                exe.shutdown();
+            });
 
-            View.OnClickListener fnOnClick = v -> {
-                Util.showMessage(ctx, "data " + tvId.getText().toString());
-            };
-
-            View.OnLongClickListener fnOnLongClick = v -> {
-                Util.showMessage(ctx, "long click; data " + tvId.getText().toString());
-                return true;
-            };
-
-            /*tvId.setOnClickListener(fnOnClick);
-            tvNama.setOnClickListener(fnOnClick);
-            tvJumlah.setOnClickListener(fnOnClick);
-            kontainer.setOnClickListener(fnOnClick);*/
-            btnLihat.setOnClickListener(fnOnClick);
-
-            tvId.setOnLongClickListener(fnOnLongClick);
-            tvNama.setOnLongClickListener(fnOnLongClick);
-            tvJumlah.setOnLongClickListener(fnOnLongClick);
-            kontainer.setOnLongClickListener(fnOnLongClick);
-
-            kontainer.addView(tvId);
-            kontainer.addView(tvNama);
-            kontainer.addView(tvJumlah);
-            kontainer.addView(btnLihat);
-
-            //tableRow.addView(tvId);
-            //tableRow.addView(tvNama);
-            //tableRow.addView(tvJumlah);
-            tableRow.addView(kontainer);
+            tableRow.addView(customLayout);
 
             tbl.setOrientation(TableLayout.VERTICAL);
             tbl.addView(tableRow);

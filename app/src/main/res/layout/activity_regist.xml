@@ -103,7 +103,7 @@
             android:background="#eee"
             android:ems="10"
             android:hint="@string/prompt_password"
-            android:inputType="text"
+            android:inputType="text|textPassword"
             android:paddingLeft="8dp"
             android:paddingRight="8dp" />
     </LinearLayout>
