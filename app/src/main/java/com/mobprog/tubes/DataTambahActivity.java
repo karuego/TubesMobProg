@@ -48,6 +48,8 @@ public class DataTambahActivity extends AppCompatActivity {
     }
 
     protected void button1_OnClick(View v) {
+        button1.setEnabled(false);
+
         final String nama = editText1.getText().toString();
         final String jumlah = editText2.getText().toString();
         final String jsonData = "{\"nama\":\"" + nama + "\",\"jumlah\":\"" + jumlah + "\"}";
@@ -106,6 +108,7 @@ public class DataTambahActivity extends AppCompatActivity {
 
                         ((Activity) ctx).runOnUiThread(() -> {
                             showDialogInfo("Data berhasil ditambahkan.\nId : "+id_+"\nBarang : "+nama_+"\nJumlah :" + jumlah_);
+                            button1.setEnabled(true);
                         });
                     }
                 } catch (ExecutionException | InterruptedException e) {
